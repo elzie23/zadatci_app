@@ -12,10 +12,10 @@ Engine • hash d8a2d6c768c334d53e16277f837970ffa1e2de81 (revision deb287481e) (
 Tools • Dart 3.13.5 • DevTools 2.60.0
 
 Dart SDK version: 3.13.5 (stable) (Tue Sep 29 01:00:52 2026 -0700) on "windows_x64"
-![screenshot verzija](2026-10-15.png)
+![screenshot verzija](dokazi/2026-10-15.png)
 
 ### Korišteni uređaj:
-Na Android Studiu odabran Pixel 10a - Android 17.0
+Chrome i na Android Studiu odabran Pixel 10a - Android 17.0
 
 ### Provedene izmjene i odgovori na pitanja:
 Odgovori na pitanja:
@@ -30,7 +30,7 @@ Svaki zaslon koji prikazuje podatke treba imati tri stanja:
 
 
 Izmjene: 
-1. Dodavanje polja String?:   
+Prvi zadatak- Dodavanje polja String?:   
 final String? opis;
 konstruktor:
 const Zadatak({required this.id, required this.naslov, this.zavrsen = false, this.opis});
@@ -40,26 +40,28 @@ toJson dodana linija:
     'opis': opis,
 kopiraj dodana linija:
     opis: opis ?? this.opis
-<br>![alt text](image-1.png)
+<br>![alt text](dokazi/image-1.png)
 <br>
 
-2. Dodan opis zadatka 2:   { "id": 2, "naslov": "Git", "opis": "neki opis zadatka"},
+Drugi zadatak- Dodan opis zadatka 2:   { "id": 2, "naslov": "Git", "opis": "neki opis zadatka"},
 Ako se ispisuje opis onog zadatka koji ga ima, ispisat ce se prava vrijednost, no ispisivanjem opisa zadatka koji nema opis ispiše se samo null.
-<br> ![alt text](image.png)
+<br> ![alt text](dokazi/image.png)
 <br>
-3.![alt text](image-2.png)
- ![alt text](image-3.png)<br> 
-  Future.wait pokreće dva dohvati() istovremeno, vrijeme se mjeri pomoću Stopwatch(). Iako pojedini poziv traje 800ms, budući da ih Future.wait pozove istoremeno, ukupno trajanje je oko 800ms.
-  4. Poziv dohvati() omota se metodom .timeout() s ograničenjem od 300 ms. Budući da dohvat traje oko 800 ms, nastaje TimeoutException, koju hvatamo i ispisujemo poruku: Isteklo vrijeme. final repo = ZadatakRepozitorij(neuspjeha: 1);
+Treći zadatak - ![alt text](dokazi/image-2.png)
+![alt text](dokazi/image-3.png)<br> 
+Future.wait pokreće dva dohvati() istovremeno, vrijeme se mjeri pomoću Stopwatch(). Iako pojedini poziv traje 800ms, budući da ih Future.wait pozove istoremeno, ukupno trajanje je oko 800ms.
+Četvrti zadatak - Poziv dohvati() omota se metodom .timeout() s ograničenjem od 300 ms. Budući da dohvat traje oko 800 ms, nastaje TimeoutException, koju hvatamo i ispisujemo poruku: Isteklo vrijeme. final repo = ZadatakRepozitorij(neuspjeha: 1);
 <br>
- ![alt text](image-4.png)
+![alt text](dokazi/image-4.png)
  <br>
-  5. Izmjena poruke pogreške: Text('Pogreska pri dohvacanju zadataka, provjerite internetsku vezu i pokusajte ponovno.'),
-  Kada bismo u liniji   final _repo = ZadatakRepozitorij(neuspjeha: 0, prazno: false);
+Peti zadatak - Izmjena poruke pogreške: Text('Pogreska pri dohvacanju zadataka, provjerite internetsku vezu i pokusajte ponovno.'),
+Kada bismo u liniji   final _repo = ZadatakRepozitorij(neuspjeha: 0, prazno: false);
 za broj neuspjeha stavili 1:
 <br>
-![alt text](image-5.png) <br>
-  6. Dodavanhje teksta o završenim zadacima ispod popisa: final brojZavrsenih = zadaci.where((z) => z.zavrsen).length;
+![alt text](dokazi/image-5.png)
+<br>
+Šesti zadatak - Dodavanje teksta o završenim zadacima ispod popisa:
+ final brojZavrsenih = zadaci.where((z) => z.zavrsen).length;
 
           if (i== zadaci.length) {
             return ListTile(
@@ -69,9 +71,9 @@ za broj neuspjeha stavili 1:
               ),
             );
           }
+![broj zavrsenih zadataka](dokazi/image-6.png) 
 <br>
- ![alt text](image-6.png) <br>
-  7.  return RefreshIndicator(
+Sedmi zadatak - return RefreshIndicator(
       onRefresh: () async {
       setState(() {
         _buduci = _repo.dohvati();

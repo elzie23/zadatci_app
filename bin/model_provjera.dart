@@ -6,7 +6,7 @@ import 'package:zadatci_app/zadatak.dart';
 void main() {
   const tekst = '''
   [{ "id": 1, "naslov": "Instalacija", "zavrsen": true},
-  { "id": 2, "naslov": "Git"},
+  { "id": 2, "naslov": "Git", "opis": "neki opis zadatka"},
   { "id": 3, "naslov": "Dart", "zavrsen": false}
   ]''';
 
@@ -14,9 +14,10 @@ void main() {
       .map((e) => Zadatak.fromJson(e as Map<String, dynamic>))
       .toList();
 
-      print('Zadataka: ${lista.length}');
-      print('Drugi je zavrsen: ${lista[1].zavrsen}');
-      print(jsonEncode(lista.first.toJson()));
-      print(lista[1].kopiraj(zavrsen: true).zavrsen);
-
+  print('Zadataka: ${lista.length}');
+  print('Drugi je zavrsen: ${lista[1].zavrsen}');
+  print(jsonEncode(lista.first.toJson()));
+  print(lista[1].kopiraj(zavrsen: true).zavrsen);
+  print(lista[1].opis);
+  print(lista[2].opis);
 }

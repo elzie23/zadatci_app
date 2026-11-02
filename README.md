@@ -40,6 +40,7 @@ void _odustani() {
     Navigator.pop(context);
   }
   </code>
+  
 ![gumb odustani](dokazi/slika2.png)
 4. Provjera duplikata naslova:
 <code>
@@ -47,11 +48,13 @@ void _odustani() {
       return 'Zadatak s tim naslovom već postoji';
     }
 </code>
+
 ![postojeci zadatak](dokazi/slika3.png)
 5. Provjera broja znakova u naslovu:
 <code>
     if(tekst.length > 40) return 'Naslov ne smije biti duži od 40 znakova';
 </code>
+
 ![predug naslov](dokazi/slika4.png)
 6. Provjera počinje li naslov velikim slovom:
 <code>

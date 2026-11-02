@@ -2,84 +2,61 @@
 
 ## Manuela Kurtović
 
-### Operacijski sustav:
- Windows 10 Pro
-
-### Verzije Fluttera i Darta:
-Flutter 3.47.7 • channel stable • https://github.com/flutter/flutter.git
-Framework • revision abaf9c5237 (7 days ago) • 2026-10-08 09:51:21 -0700
-Engine • hash d8a2d6c768c334d53e16277f837970ffa1e2de81 (revision deb287481e) (8 days ago) • 2026-10-07 17:09:12.000Z
-Tools • Dart 3.13.5 • DevTools 2.60.0
-
-Dart SDK version: 3.13.5 (stable) (Tue Sep 29 01:00:52 2026 -0700) on "windows_x64"
-![screenshot verzija](2026-10-15.png)
-
-### Korišteni uređaj:
-Na Android Studiu odabran Pixel 10a - Android 17.0
-
 ### Provedene izmjene i odgovori na pitanja:
 Odgovori na pitanja:
-1. Polja modela definirana su kao final zbog čega se njihove vrijednosti ne mogu mijenjati nakon stvaranja objekta, što sprječava slučajne promjene podataka. Za promjenu vrijednosti može se koristiti metoda kopiraj, koja stvara novi objekt s izmijenjenim podacima.
-Ako u JSON-u ne postoji polje naslov,a metoda fromJson koristi json['naslov'] as String, njegova će vrijednost biti null. Null se ne može pretvoriti u String,pa će program baciti iznimku tijekom izvođenja. To se spriječava provjerom postoji li polje ili definiranjem prikladne zadane vrijednosti.
-2. Ako Future završi s pogreškom, a mi je ne uhvatimo pomoću 'try-catch' bloka, ta pogreška će ostati neobrađena. Zbog toga se može pojaviti poruka o neobrađenoj asinkronoj pogreški, a u nekim slučajevima može doći i do prekida rada dijela programa ili rušenja aplikacije.
-3. Future se stvara u polju, a ne u metodi build, jer se metoda build može pozivati više puta. Ako bi se Future nalazio unutar te metode, podaci bi se svaki put iznova dohvaćali, što nije potrebno. Kada se Future stvori u polju, dohvaćanje se ne ponavlja pri svakom izgrađivanju zaslona, nego samo kada ga ponovno pozovemo, na primjer klikom na gumb za ponovni pokušaj.
-Svaki zaslon koji prikazuje podatke treba imati tri stanja:
-<br> Učitavanje (prikazuje se indikator dok se podaci dohvaćaju)
-<br> Pogreška (prikazuje se poruka ako dohvaćanje podataka ne uspije)
-<br> Uspjeh (prikaz dohvaćenih podaci, ako je popis prazan prikazuje se poruka da nema podataka)
+1. Zadavanje boje u temi je bolje od zadavanja boje u pojedinom widgetu jer je onda, prilikom promjene boje, potrebno promijeniti samo temu, a ne tražiti za svaki widget dio gdje smo zadali boju. To isto čini kiod kraćim i čitljivijim.
+2. Metoda validate() se poziva unutar forme za provjeru tekstualnih polja. A ko unutar forme postoji više tekstualnih polja metoda validate prolazi kroz svaki od njih i provjerava ih, samo u slučaju da su sva polja prošla provjeru veće true, ako ijedno polje ima neispravan unus vraća false. Validator mora vratiti null ili poruku o grešci, tu null označava odsutstvo problema/greške.
+3. Nakon await Navigator.push provjerava mounted kako bi bio siguran da ekran postoji, to jest da nije u međuvremenu uništen. Dok na ekranu s formom korisnih unese podatke, na prvom ekranu se moglo nešto izmijeniti da dovede do toga da taj ekran više ne postoji u memoriji. To bi uzrokovalo da mounted poprimi vrijednost false, te, ako se kod nastavi izvršavati može doći do rušenja aplikacije. 
 
+Izmjene:
+1. Izmjena boje: postavljanjem teme na deepOrange dobijemo ![narancasta](dokazi/slika.png)
+2. Prikaz broja zadataka u naslovu ostvaren je promjenom sljedeće linije koda:
+<code> appBar: AppBar(title: Text('Zadatci (${_zadaci.length})')),
+</code>
+Kako bi se broj zadataka u naslovu mogao promijeniti kada se doda novi zadatak izbrisano je 'const' ispred Text-a, te je dodan setState(())unutar kojeg je već postojeći kod: 
+<code>
+_zadaci
+    ..clear()
+    ..addAll(podaci);
+</code>
+što izgleda ovako:
+<code>
+setState(() {
+      _zadaci
+        ..clear()
+        ..addAll(podaci);
+    });
+</code>
+Rezultat tog koda vidljiv je na prethodnoj slici.
+3. Gumb 'Odustani' dodaj je na sljedeći način:
+unutar Scaffold-a, ispod već postojećeg button-a za spremanje dodan je sljedeći kod:
+<code>
+const SizedBox(height: 8),
+            OutlinedButton(onPressed: _odustani, child: const Text('Odustani')),
+</code>
+također je dodano:
+<code>
+void _odustani() {
+    Navigator.pop(context);
+  }
+  </code>
+![gumb odustani](dokazi/slika2.png)
+4. Provjera duplikata naslova:
+<code>
+ if(widget.postojeci.any((z) => z.naslov == tekst)) {
+      return 'Zadatak s tim naslovom već postoji';
+    }
+</code>
+![postojeci zadatak](dokazi/slika3.png)
+5. Provjera broja znakova u naslovu:
+<code>
+    if(tekst.length > 40) return 'Naslov ne smije biti duži od 40 znakova';
+</code>
+![predug naslov](dokazi/slika4.png)
+6. Provjera počinje li naslov velikim slovom:
+<code>
+    if(tekst[0] != tekst[0].toUpperCase()) return 'Naslov mora početi velikim slovom';
 
-Izmjene: 
-1. Dodavanje polja String?:   
-final String? opis;
-konstruktor:
-const Zadatak({required this.id, required this.naslov, this.zavrsen = false, this.opis});
-fromJson dodana linija:
-    opis: json['opis'] as String?,
-toJson dodana linija:
-    'opis': opis,
-kopiraj dodana linija:
-    opis: opis ?? this.opis
-<br>![alt text](image-1.png)
-<br>
+</code>
 
-2. Dodan opis zadatka 2:   { "id": 2, "naslov": "Git", "opis": "neki opis zadatka"},
-Ako se ispisuje opis onog zadatka koji ga ima, ispisat ce se prava vrijednost, no ispisivanjem opisa zadatka koji nema opis ispiše se samo null.
-<br> ![alt text](image.png)
-<br>
-3.![alt text](image-2.png)
- ![alt text](image-3.png)<br> 
-  Future.wait pokreće dva dohvati() istovremeno, vrijeme se mjeri pomoću Stopwatch(). Iako pojedini poziv traje 800ms, budući da ih Future.wait pozove istoremeno, ukupno trajanje je oko 800ms.
-  4. Poziv dohvati() omota se metodom .timeout() s ograničenjem od 300 ms. Budući da dohvat traje oko 800 ms, nastaje TimeoutException, koju hvatamo i ispisujemo poruku: Isteklo vrijeme. final repo = ZadatakRepozitorij(neuspjeha: 1);
-<br>
- ![alt text](image-4.png)
- <br>
-  5. Izmjena poruke pogreške: Text('Pogreska pri dohvacanju zadataka, provjerite internetsku vezu i pokusajte ponovno.'),
-  Kada bismo u liniji   final _repo = ZadatakRepozitorij(neuspjeha: 0, prazno: false);
-za broj neuspjeha stavili 1:
-<br>
-![alt text](image-5.png) <br>
-  6. Dodavanhje teksta o završenim zadacima ispod popisa: final brojZavrsenih = zadaci.where((z) => z.zavrsen).length;
-
-          if (i== zadaci.length) {
-            return ListTile(
-              title: Text(
-                '$brojZavrsenih od ${zadaci.length} završeno',
-                style: const TextStyle(fontStyle: FontStyle.italic),
-              ),
-            );
-          }
-<br>
- ![alt text](image-6.png) <br>
-  7.  return RefreshIndicator(
-      onRefresh: () async {
-      setState(() {
-        _buduci = _repo.dohvati();
-      });
-
-      await _buduci;
-    }, 
-    child: ListView.builder(...
-
-
-
+![malo slovo](dokazi/slika5.png)

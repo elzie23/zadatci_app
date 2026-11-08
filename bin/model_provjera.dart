@@ -18,6 +18,6 @@ void main() {
   print('Drugi je zavrsen: ${lista[1].zavrsen}');
   print(jsonEncode(lista.first.toJson()));
   print(lista[1].kopiraj(zavrsen: true).zavrsen);
-  print(lista[1].opis);
-  print(lista[2].opis);
+ // print(lista[1].opis);
+  //print(lista[2].opis);
 }

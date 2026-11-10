@@ -24,39 +24,38 @@ class _FormaEkranState extends State<FormaEkran> {
     return null;
   }
 
+  void _spremi() {
+    if (!_kljuc.currentState!.validate()) return;
+    Navigator.pop(context, _naslov.text.trim());
+  }
 
-void _spremi() {
-  if (!_kljuc.currentState!.validate()) return;
-  Navigator.pop(context, _naslov.text.trim());
-}
-
-@override
-Widget build(BuildContext context) {
-  return Scaffold(
-    appBar: AppBar(title: const Text('Novi zadatak')),
-    body: Padding(
-      padding: const EdgeInsets.all(16),
-      child: Form(
-        key: _kljuc,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            TextFormField(  
-              controller: _naslov,
-              decoration: const InputDecoration(
-                labelText: 'Naslov',
-                border: OutlineInputBorder(),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Novi zadatak')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Form(
+          key: _kljuc,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              TextFormField(
+                controller: _naslov,
+                decoration: const InputDecoration(
+                  labelText: 'Naslov',
+                  border: OutlineInputBorder(),
+                ),
+                textInputAction: TextInputAction.done,
+                validator: _provjeriNaslov,
+                onFieldSubmitted: (_) => _spremi(),
               ),
-              textInputAction: TextInputAction.done,
-              validator: _provjeriNaslov,
-              onFieldSubmitted: (_) => _spremi(),
-            ),
-            const SizedBox(height: 16),
-            FilledButton(onPressed: _spremi, child: const Text('Spremi')),
-          ],
+              const SizedBox(height: 16),
+              FilledButton(onPressed: _spremi, child: const Text('Spremi')),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

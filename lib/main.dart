@@ -46,7 +46,6 @@ class _ZadatciEkranState extends State<ZadatciEkran> {
     super.dispose();
   }
 
-
   Future<void> _dodaj() async {
     final naslov = await Navigator.push<String>(
       context,
@@ -54,9 +53,8 @@ class _ZadatciEkranState extends State<ZadatciEkran> {
     );
     if (!mounted || naslov == null) return;
     _vm.dodaj(naslov);
-    ScaffoldMessenger.of(
-      context,
-      ).showSnackBar(SnackBar(content: Text('Dodano: $naslov')));
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Dodano: $naslov')));
   }
 
   void _otvoriStatistiku() {
@@ -77,8 +75,13 @@ class _ZadatciEkranState extends State<ZadatciEkran> {
             tooltip: 'Statistika',
             icon: const Icon(Icons.bar_chart),
           ),
+          Switch(
+            value: _vm.samoNezavrseni,
+            onChanged: (v) => setState(() => _vm.samoNezavrseni = v),
+            activeThumbColor: Colors.purple,
+          ),
         ],
-    ),
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: _dodaj,
         tooltip: 'Novi zadatak',
@@ -87,48 +90,59 @@ class _ZadatciEkranState extends State<ZadatciEkran> {
       body: ListenableBuilder(
         listenable: _vm,
         builder: (context, _) {
-          switch(_vm.stanje) {
+          switch (_vm.stanje) {
             case Stanje.ucitavanje:
-            return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             case Stanje.greska:
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.error_outline, size: 48, color: Colors.red),
-                  const SizedBox(height: 8),
-                  Text(_vm.poruka),
-                  const SizedBox(height: 8),
-                  FilledButton(
-                    onPressed: _vm.ucitaj,
-                    child: const Text('Pokušaj ponovno'),
-                  ),
-                ],
-              ),
-            );
-            case Stanje.uspjeh:
-            if (_vm.zadatci.isEmpty) {
-              return const Center(child: Text('Nema zadataka'));
-            }
-            
-         
-          return ListView.builder(
-            itemCount: _vm.zadatci.length,
-            itemBuilder: (context, i) {
-              final z = _vm.zadatci[i];
-              return CheckboxListTile(
-                value: z.zavrsen,
-                onChanged: (_) => _vm.promijeniZavrsen(z.id),
-                title: Text(
-                  z.naslov,
-                  style: TextStyle(
-                    decoration: z.zavrsen ? TextDecoration.lineThrough : null,
-                  ),
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: Colors.red,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(_vm.poruka),
+                    const SizedBox(height: 8),
+                    FilledButton(
+                      onPressed: _vm.ucitaj,
+                      child: const Text('Pokušaj ponovno'),
+                    ),
+                  ],
                 ),
               );
-            },
-          );
-        }
+            case Stanje.uspjeh:
+              if (_vm.odabrani.isEmpty) {
+                return const Center(child: Text('Nema zadataka'));
+              }
+
+              return ListView.builder(
+                itemCount: _vm.odabrani.length,
+                itemBuilder: (context, i) {
+                  final z = _vm.odabrani.elementAt(i);
+
+                  return Dismissible(
+                    key: ValueKey(z.id),
+                    direction: DismissDirection.endToStart,
+                    onDismissed: (_) => _vm.ukloni(z.id),
+                    child: CheckboxListTile(
+                      value: z.zavrsen,
+                      onChanged: (_) => _vm.promijeniZavrsen(z.id),
+                      title: Text(
+                        z.naslov,
+                        style: TextStyle(
+                          decoration: z.zavrsen
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+          }
         },
       ),
     );

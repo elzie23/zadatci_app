@@ -4,7 +4,6 @@ import 'package:zadatci_app/zadatci_viewmodel.dart';
 
 void main() {
   test('ucitaj puni popis i postavlja stanje uspjeh', () async {
-
     final vm = ZadatciViewModel(ZadatakRepozitorij());
     await vm.ucitaj();
     expect(vm.stanje, Stanje.uspjeh);
@@ -33,5 +32,13 @@ void main() {
     await vm.ucitaj();
     vm.promijeniZavrsen(3);
     expect(vm.zavrseno, 3);
+  });
+  test('ukloni smanjuje broj zadataka', () async {
+    final vm = ZadatciViewModel(ZadatakRepozitorij());
+    await vm.ucitaj();
+    final prije = vm.ukupno;
+    expect(prije, 4);
+    vm.ukloni(3);
+    expect(vm.ukupno, prije - 1);
   });
 }

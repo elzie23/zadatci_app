@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'zadatci_viewmodel.dart';
 
 class StatistikaEkran extends StatelessWidget {
@@ -9,7 +10,7 @@ class StatistikaEkran extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Statistika')), 
+      appBar: AppBar(title: const Text('Statistika')),
       body: ListenableBuilder(
         listenable: vm,
         builder: (context, _) {

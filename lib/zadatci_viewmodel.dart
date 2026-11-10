@@ -1,5 +1,7 @@
 import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
+
 import 'repozitorij.dart';
 import 'zadatak.dart';
 
@@ -21,6 +23,10 @@ class ZadatciViewModel extends ChangeNotifier {
   int get ukupno => _zadatci.length;
   int get zavrseno => _zadatci.where((z) => z.zavrsen).length;
   int get preostalo => ukupno - zavrseno;
+  bool samoNezavrseni = false;
+
+  Iterable<Zadatak> get odabrani =>
+      _zadatci.where((z) => !samoNezavrseni || !z.zavrsen);
 
   Future<void> ucitaj() async {
     _stanje = Stanje.ucitavanje;
@@ -32,13 +38,13 @@ class ZadatciViewModel extends ChangeNotifier {
         ..addAll(podaci);
       _stanje = Stanje.uspjeh;
     } on ZadatciException catch (e) {
-    _poruka = e.poruka;
-    _stanje = Stanje.greska;
+      _poruka = e.poruka;
+      _stanje = Stanje.greska;
     }
     notifyListeners();
   }
 
-/// Dodaje zadatak. Vraća false ako naslov nije valjan.
+  /// Dodaje zadatak. Vraća false ako naslov nije valjan.
   bool dodaj(String naslov) {
     final tekst = naslov.trim();
     if (tekst.length < 3) return false;
@@ -52,6 +58,11 @@ class ZadatciViewModel extends ChangeNotifier {
     final i = _zadatci.indexWhere((z) => z.id == id);
     if (i == -1) return;
     _zadatci[i] = _zadatci[i].kopiraj(zavrsen: !_zadatci[i].zavrsen);
+    notifyListeners();
+  }
+
+  void ukloni(int id) {
+    _zadatci.removeWhere((z) => z.id == id);
     notifyListeners();
   }
 }

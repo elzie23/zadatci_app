@@ -1,0 +1,7 @@
+00:00 +0: loading D:/nramu/zadatci_app/test/zadatci_viewmodel_test.dart
+00:00 +0: ucitaj puni popis i postavlja stanje uspjeh
+00:00 +1: ucitaj javlja pogresku kad repozitorij ne uspije
+00:01 +2: dodaj odbija prekratak naslov i obavještava slušatelje
+00:02 +3: promijeniZavrsen mijenja broj završenih
+00:03 +4: ukloni smanjuje broj zadataka
+00:04 +5: All tests passed!

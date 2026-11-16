@@ -18,6 +18,14 @@ class KvarIzvor extends MemorijskiIzvor {
   @override
   Future<Zadatak> dodaj(String naslov) =>
       throw ZadatciException('Nema veze s poslužiteljem');
+
+  @override
+  Future<void> postaviZavrsen(int id, bool zavrsen) =>
+      throw ZadatciException('Nema veze s poslužiteljem');
+
+  @override
+  Future<void> obrisi(int id) =>
+      throw ZadatciException('Nema veze s poslužiteljem');
 }
 
 void main() {
@@ -79,5 +87,21 @@ void main() {
     expect(await vm.obrisi(1), isTrue);
     expect(vm.ukupno, 3);
     expect(vm.zadatci.any((z) => z.id == 1), isFalse);
+  });
+
+  test('promijeniZavrsen ne mijenja popis kad izvor javi pogrešku', () async {
+    final vm = ZadatciViewModel(KvarIzvor());
+    await vm.ucitaj();
+    expect(await vm.promijeniZavrsen(3), isFalse);
+    expect(vm.zavrseno, 2);
+    expect(vm.poruka, 'Nema veze s poslužiteljem');
+  });
+
+  test('obrisi ne mijenja popis kad izvor javi pogrešku', () async {
+    final vm = ZadatciViewModel(KvarIzvor());
+    await vm.ucitaj();
+    expect(await vm.obrisi(1), isFalse);
+    expect(vm.ukupno, 4);
+    expect(vm.poruka, 'Nema veze s poslužiteljem');
   });
 }

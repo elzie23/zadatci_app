@@ -22,30 +22,31 @@ class SupabaseIzvor implements ZadatciIzvor {
     }
   }
 
-  // TODO 3: implementirajte četiri metode pomoću _db i _izvedi(...).
   // Primjer za dohvati: _izvedi(() async { ... _db.from('zadatci').select() ... });
 
   @override
-  Future<List<Zadatak>> dohvati() async {
-    // select() uz order('id'); redove pretvorite u Zadatak.fromJson
-    throw UnimplementedError('dohvati');
-  }
+  Future<List<Zadatak>> dohvati() => _izvedi(() async {
+    final redovi = await _db.from('zadatci').select().order('id');
+    return redovi.map(Zadatak.fromJson).toList();
+  });
 
   @override
-  Future<Zadatak> dodaj(String naslov) async {
-    // insert({'naslov': naslov}) uz select().single()
-    throw UnimplementedError('dodaj');
-  }
+  Future<Zadatak> dodaj(String naslov) => _izvedi(() async {
+    final red = await _db
+        .from('zadatci')
+        .insert({'naslov': naslov})
+        .select()
+        .single();
+    return Zadatak.fromJson(red);
+  });
 
   @override
-  Future<void> postaviZavrsen(int id, bool zavrsen) async {
-    // update({'zavrsen': zavrsen}) uz eq('id', id)
-    throw UnimplementedError('postaviZavrsen');
-  }
+  Future<void> postaviZavrsen(int id, bool zavrsen) => _izvedi(() async {
+    await _db.from('zadatci').update({'zavrsen': zavrsen}).eq('id', id);
+  });
 
   @override
-  Future<void> obrisi(int id) async {
-    // delete() uz eq('id', id)
-    throw UnimplementedError('obrisi');
-  }
+  Future<void> obrisi(int id) => _izvedi(() async {
+    await _db.from('zadatci').delete().eq('id', id);
+  });
 }

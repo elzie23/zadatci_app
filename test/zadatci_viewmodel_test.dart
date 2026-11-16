@@ -1,44 +1,83 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:zadatci_app/repozitorij.dart';
+import 'package:zadatci_app/memorijski_izvor.dart';
+import 'package:zadatci_app/zadatak.dart';
+import 'package:zadatci_app/zadatci_izvor.dart';
 import 'package:zadatci_app/zadatci_viewmodel.dart';
+
+MemorijskiIzvor izvor({int neuspjeha = 0, bool prazno = false}) =>
+    MemorijskiIzvor(
+      neuspjeha: neuspjeha,
+      prazno: prazno,
+      odgoda: Duration.zero,
+    );
+
+/// Izvor koji uvijek javlja pogrešku pri izmjenama.
+class KvarIzvor extends MemorijskiIzvor {
+  KvarIzvor() : super(odgoda: Duration.zero);
+
+  @override
+  Future<Zadatak> dodaj(String naslov) =>
+      throw ZadatciException('Nema veze s poslužiteljem');
+}
 
 void main() {
   test('ucitaj puni popis i postavlja stanje uspjeh', () async {
-    final vm = ZadatciViewModel(ZadatakRepozitorij());
+    final vm = ZadatciViewModel(izvor());
     await vm.ucitaj();
     expect(vm.stanje, Stanje.uspjeh);
     expect(vm.ukupno, 4);
     expect(vm.zavrseno, 2);
   });
-  test('ucitaj javlja pogresku kad repozitorij ne uspije', () async {
-    final vm = ZadatciViewModel(ZadatakRepozitorij(neuspjeha: 1));
+
+  test('ucitaj javlja pogresku kad izvor ne uspije', () async {
+    final vm = ZadatciViewModel(izvor(neuspjeha: 1));
     await vm.ucitaj();
     expect(vm.stanje, Stanje.greska);
     expect(vm.poruka, 'Nema veze s poslužiteljem');
   });
-  test('dodaj odbija prekratak naslov i obavještava slušatelje', () async {
-    final vm = ZadatciViewModel(ZadatakRepozitorij(prazno: true));
+
+  test('dodaj odbija prekratak naslov i ne obavještava slušatelje', () async {
+    final vm = ZadatciViewModel(izvor(prazno: true));
     await vm.ucitaj();
     var pozivi = 0;
     vm.addListener(() => pozivi++);
-    expect(vm.dodaj('ab'), isFalse);
+    expect(await vm.dodaj('ab'), isFalse);
     expect(pozivi, 0);
-    expect(vm.dodaj('Novi zadatak'), isTrue);
+    expect(await vm.dodaj('Novi zadatak'), isTrue);
     expect(pozivi, 1);
     expect(vm.ukupno, 1);
   });
-  test('promijeniZavrsen mijenja broj završenih', () async {
-    final vm = ZadatciViewModel(ZadatakRepozitorij());
+
+  test('dodaj dodaje zadatak koji vrati izvor', () async {
+    final vm = ZadatciViewModel(izvor());
     await vm.ucitaj();
-    vm.promijeniZavrsen(3);
-    expect(vm.zavrseno, 3);
+    await vm.dodaj('Nova vježba');
+    expect(vm.zadatci.last.naslov, 'Nova vježba');
+    expect(vm.zadatci.last.id, 5);
   });
-  test('ukloni smanjuje broj zadataka', () async {
-    final vm = ZadatciViewModel(ZadatakRepozitorij());
+
+  test('dodaj ne mijenja popis kad izvor javi pogrešku', () async {
+    final vm = ZadatciViewModel(KvarIzvor());
     await vm.ucitaj();
-    final prije = vm.ukupno;
-    expect(prije, 4);
-    vm.ukloni(3);
-    expect(vm.ukupno, prije - 1);
+    expect(await vm.dodaj('Novi zadatak'), isFalse);
+    expect(vm.ukupno, 4);
+    expect(vm.poruka, 'Nema veze s poslužiteljem');
+  });
+
+  test('promijeniZavrsen mijenja broj završenih', () async {
+    final vm = ZadatciViewModel(izvor());
+    await vm.ucitaj();
+    await vm.promijeniZavrsen(3);
+    expect(vm.zavrseno, 3);
+    await vm.promijeniZavrsen(3);
+    expect(vm.zavrseno, 2);
+  });
+
+  test('obrisi uklanja zadatak i smanjuje ukupno', () async {
+    final vm = ZadatciViewModel(izvor());
+    await vm.ucitaj();
+    expect(await vm.obrisi(1), isTrue);
+    expect(vm.ukupno, 3);
+    expect(vm.zadatci.any((z) => z.id == 1), isFalse);
   });
 }

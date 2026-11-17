@@ -26,6 +26,10 @@ class KvarIzvor extends MemorijskiIzvor {
   @override
   Future<void> obrisi(int id) =>
       throw ZadatciException('Nema veze s poslužiteljem');
+
+  @override
+  Future<void> postaviNaslov(int id, String naslov) =>
+      throw ZadatciException('Nema veze s poslužiteljem');
 }
 
 void main() {
@@ -102,6 +106,24 @@ void main() {
     await vm.ucitaj();
     expect(await vm.obrisi(1), isFalse);
     expect(vm.ukupno, 4);
+    expect(vm.poruka, 'Nema veze s poslužiteljem');
+  });
+
+  test('promijeniNaslov mijenja naslov zadataka', () async {
+    final vm = ZadatciViewModel(izvor());
+    await vm.ucitaj();
+    expect(await vm.promijeniNaslov(3, 'Novi naslov'), isTrue);
+    expect(vm.zadatci.firstWhere((z) => z.id == 3).naslov, 'Novi naslov');
+  });
+
+  test('promijeniNaslov ne mijenja popis kad izvor javi pogrešku', () async {
+    final vm = ZadatciViewModel(KvarIzvor());
+    await vm.ucitaj();
+    expect(await vm.promijeniNaslov(3, 'Novi naslov'), isFalse);
+    expect(
+      vm.zadatci.firstWhere((z) => z.id == 3).naslov,
+      'Dart: Future i Stream',
+    );
     expect(vm.poruka, 'Nema veze s poslužiteljem');
   });
 }

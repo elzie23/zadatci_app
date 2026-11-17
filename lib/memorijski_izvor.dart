@@ -58,4 +58,11 @@ class MemorijskiIzvor implements ZadatciIzvor {
     await Future.delayed(odgoda);
     _redovi.removeWhere((z) => z.id == id);
   }
+
+  @override
+  Future<void> postaviNaslov(int id, String naslov) async {
+    await Future.delayed(odgoda);
+    final i = _redovi.indexWhere((z) => z.id == id);
+    if (i != -1) _redovi[i] = _redovi[i].kopiraj(naslov: naslov);
+  }
 }

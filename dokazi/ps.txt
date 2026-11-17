@@ -1,0 +1,12 @@
+NAME                             IMAGE                                    COMMAND                  SERVICE     CREATED        STATUS                  PORTS
+realtime-dev.supabase-realtime   supabase/realtime:v2.148.3               "/usr/bin/tini -s -g…"   realtime    17 hours ago   Up 17 hours (healthy)   
+supabase-auth                    supabase/gotrue:v2.197.0                 "auth"                   auth        17 hours ago   Up 17 hours (healthy)   
+supabase-db                      supabase/postgres:17.6.1.136             "docker-entrypoint.s…"   db          17 hours ago   Up 17 hours (healthy)   5432/tcp
+supabase-edge-functions          supabase/edge-runtime:v1.77.9            "edge-runtime start …"   functions   17 hours ago   Up 17 hours (healthy)   
+supabase-envoy                   envoyproxy/envoy:v1.39.6                 "/bin/sh /docker-ent…"   api-gw      17 hours ago   Up 17 hours (healthy)   0.0.0.0:8000->8000/tcp, [::]:8000->8000/tcp, 10000/tcp
+supabase-imgproxy                darthsim/imgproxy:v4.0.21                "entrypoint.sh imgpr…"   imgproxy    17 hours ago   Up 17 hours (healthy)   8080/tcp
+supabase-meta                    supabase/postgres-meta:v0.100.0          "docker-entrypoint.s…"   meta        17 hours ago   Up 17 hours (healthy)   8080/tcp
+supabase-pooler                  supabase/supavisor:2.9.13                "/usr/bin/tini -s -g…"   supavisor   17 hours ago   Up 17 hours (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp, 0.0.0.0:6543->6543/tcp, [::]:6543->6543/tcp
+supabase-rest                    postgrest/postgrest:v14.18               "postgrest"              rest        17 hours ago   Up 17 hours (healthy)   3000/tcp
+supabase-storage                 supabase/storage-api:v1.89.12            "docker-entrypoint.s…"   storage     17 hours ago   Up 17 hours (healthy)   5000/tcp
+supabase-studio                  supabase/studio:2026.11.02-sha-a05e7ec   "docker-entrypoint.s…"   studio      17 hours ago   Up 17 hours (healthy)   3000/tcp

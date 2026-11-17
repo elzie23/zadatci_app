@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class FormaEkran extends StatefulWidget {
-  const FormaEkran({super.key});
+  final String? pocetniNaslov;
+  const FormaEkran({super.key, this.pocetniNaslov});
 
   @override
   State<FormaEkran> createState() => _FormaEkranState();
@@ -9,7 +10,7 @@ class FormaEkran extends StatefulWidget {
 
 class _FormaEkranState extends State<FormaEkran> {
   final _kljuc = GlobalKey<FormState>();
-  final _naslov = TextEditingController();
+  late final _naslov = TextEditingController(text: widget.pocetniNaslov);
 
   @override
   void dispose() {

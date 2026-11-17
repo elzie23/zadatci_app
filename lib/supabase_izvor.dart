@@ -26,7 +26,10 @@ class SupabaseIzvor implements ZadatciIzvor {
 
   @override
   Future<List<Zadatak>> dohvati() => _izvedi(() async {
-    final redovi = await _db.from('zadatci').select().order('id');
+    final redovi = await _db
+        .from('zadatci')
+        .select()
+        .order('kreirano', ascending: false);
     return redovi.map(Zadatak.fromJson).toList();
   });
 
@@ -48,5 +51,10 @@ class SupabaseIzvor implements ZadatciIzvor {
   @override
   Future<void> obrisi(int id) => _izvedi(() async {
     await _db.from('zadatci').delete().eq('id', id);
+  });
+
+  @override
+  Future<void> postaviNaslov(int id, String naslov) => _izvedi(() async {
+    await _db.from('zadatci').update({'naslov': naslov}).eq('id', id);
   });
 }

@@ -9,6 +9,7 @@ import 'statistika_ekran.dart';
 import 'zadatci_izvor.dart';
 import 'zadatci_viewmodel.dart';
 import 'supabase_izvor.dart';
+import 'zadatak.dart';
 
 // Vrijednosti dolaze iz env.json: flutter run --dart-define-from-file=env.json
 const _supabaseUrl = String.fromEnvironment('SUPABASE_URL');
@@ -106,6 +107,19 @@ class _ZadatciEkranState extends State<ZadatciEkran> {
     );
   }
 
+  Future<void> _urediNaslov(Zadatak zadatak) async {
+    final naslov = await Navigator.push<String>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => FormaEkran(pocetniNaslov: zadatak.naslov),
+      ),
+    );
+    if (!mounted || naslov == null) return;
+    final uspjeh = await _vm.promijeniNaslov(zadatak.id, naslov);
+    if (!mounted) return;
+    _poruka(uspjeh ? 'Promijenjeno: $naslov' : _vm.poruka);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -154,30 +168,34 @@ class _ZadatciEkranState extends State<ZadatciEkran> {
               if (_vm.zadatci.isEmpty) {
                 return const Center(child: Text('Nema zadataka'));
               }
-              return ListView.builder(
-                itemCount: _vm.zadatci.length,
-                itemBuilder: (context, i) {
-                  final z = _vm.zadatci[i];
-                  return ListTile(
-                    leading: Checkbox(
-                      value: z.zavrsen,
-                      onChanged: (_) => _promijeni(z.id),
-                    ),
-                    title: Text(
-                      z.naslov,
-                      style: TextStyle(
-                        decoration: z.zavrsen
-                            ? TextDecoration.lineThrough
-                            : null,
+              return RefreshIndicator(
+                onRefresh: _vm.ucitaj,
+                child: ListView.builder(
+                  itemCount: _vm.zadatci.length,
+                  itemBuilder: (context, i) {
+                    final z = _vm.zadatci[i];
+                    return ListTile(
+                      onLongPress: () => _urediNaslov(z),
+                      leading: Checkbox(
+                        value: z.zavrsen,
+                        onChanged: (_) => _promijeni(z.id),
                       ),
-                    ),
-                    trailing: IconButton(
-                      onPressed: () => _obrisi(z.id),
-                      tooltip: 'Obriši',
-                      icon: const Icon(Icons.delete_outline),
-                    ),
-                  );
-                },
+                      title: Text(
+                        z.naslov,
+                        style: TextStyle(
+                          decoration: z.zavrsen
+                              ? TextDecoration.lineThrough
+                              : null,
+                        ),
+                      ),
+                      trailing: IconButton(
+                        onPressed: () => _obrisi(z.id),
+                        tooltip: 'Obriši',
+                        icon: const Icon(Icons.delete_outline),
+                      ),
+                    );
+                  },
+                ),
               );
           }
         },

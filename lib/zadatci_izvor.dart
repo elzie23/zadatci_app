@@ -15,4 +15,5 @@ abstract class ZadatciIzvor {
   Future<Zadatak> dodaj(String naslov);
   Future<void> postaviZavrsen(int id, bool zavrsen);
   Future<void> obrisi(int id);
+  Future<void> postaviNaslov(int id, String naslov);
 }
